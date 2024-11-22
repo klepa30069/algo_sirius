@@ -53,10 +53,24 @@ q = 4
 4 1 10 9 8 7 6 5 3 2
 
 Функция quick_sort получилась по времени примерно O(d * log d) по памяти примерно O(log d).
+Функция binary_search получилась по времени примерно O(log d) по памяти примерно O(log d).
 Функция in_out получилась по времени примерно O(n * (d + q)) по памяти примерно O(n * d + 3 * d + n + 4).
-Итого: вся программа по времени получилось примерно O(n * (d + q) + d * log d) по памяти примерно O(n * d + 3 * d + n + log d + 4).
+Итого: вся программа по времени получилось примерно O(n * (d + q) + d * log d + log d) по памяти примерно O(n * d + 3 * d + n + 2 * log d + 4).
 """
 from random import randint
+
+
+def binary_search(arr, low, high, data):
+    mid = -1
+    while low <= high:
+        mid = low + (high - low) // 2
+        if arr[mid] == data:
+            return mid
+        elif arr[mid] > data:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return mid
 
 
 def quick_sort(array, index, left, right):
@@ -107,9 +121,13 @@ def in_out():
             print()
         elif q[0] == 2:
             rel_i = relevance_index.index(q[1])
-            relevance_data[rel_i] = relevance_data[rel_i] - (a[q[2] - 1] * f[q[1] - 1][q[2] - 1]) + (a[q[2] - 1] * q[3])
+            new_rel = relevance_data[rel_i] - (a[q[2] - 1] * f[q[1] - 1][q[2] - 1]) + (a[q[2] - 1] * q[3])
+            relevance_data.pop(rel_i)
+            relevance_index.pop(rel_i)
             f[q[1] - 1][q[2] - 1] = q[3]
-            relevance_data, relevance_index = quick_sort(relevance_data, relevance_index, 0, len(relevance_data) - 1)
+            mind = binary_search(relevance_data, 0, len(relevance_data) - 1, new_rel)
+            relevance_data.insert(mind, new_rel)
+            relevance_index.insert(mind, q[1])
 
 
 if __name__ == "__main__":
